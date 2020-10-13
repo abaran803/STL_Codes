@@ -9,13 +9,28 @@ int main()
 	#endif
 
 
-	PriorityQueue pq = PriorityQueue(100);
-	pq.push(26);
-	pq.push(4);
-	pq.push(23);
-	pq.push(2);
-	pq.push(53);
-	cout << pq.pop() << endl;
-	cout << pq.pop() << endl;
+	Tree t = Tree();
+	t.insert(9);
+	t.insert(11);
+	t.insert(15);
+	t.insert(2);
+	t.insert(51);
+	t.insert(81);
+	t.insert(13);
+	t.insert(3);
+	t.insert(16);
+	t.preorder();
+	t.inorder();
+	t.postorder();
+	cout << t.parent(16) << endl;
+	cout << t.successor(16) << endl;
+	ll n;
+	cin >> n;
+	ll arr[n];
+	for(ll i=0;i<n;i++)
+		cin >> arr[i];
+	for(ll i=0;i<n;i++)
+		cout << t.predecessor(arr[i]) << " " << arr[i] << " ~~~" << endl;
+
 	return 0;
 }
