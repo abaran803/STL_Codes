@@ -20,24 +20,27 @@ int main()
 	t.insert(13);
 	t.insert(3);
 	t.insert(16);
-	t.inorder();
-	// t.remove(9);
-	// t.preorder();
+	t.preorder();
+	t.remove(3);
+	// t.inorder()3
+	t.preorder();
 	// t.inorder();
 	// t.postorder();
 	// t.rightNodeLeftorder();
 	// cout << t.parent(16) << endl;
 	// cout << t.successor(16) << endl;
-	ll n;
-	cin >> n;
-	ll arr[n];
-	for(ll i=0;i<n;i++)
-		cin >> arr[i];
-	for(ll i=0;i<n;i++)
-	{
+	// ll n;
+	// cin >> n;
+	// ll arr[n];
+	// for(ll i=0;i<n;i++)
+	// 	cin >> arr[i];
+	// for(ll i=0;i<n;i++)
+	// {
 		// cout << t.predecessor(arr[i]) << " " << arr[i] << " ~~~" << endl;
 		// cout << t.Height(arr[i]) << " ";
-	}
-	cout << t.root->right->data;
+	// 	t.remove(arr[i]);
+	// 	t.preorder();
+	// }
+	// t.preorder();
 	return 0;
 }

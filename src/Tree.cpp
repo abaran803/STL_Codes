@@ -87,13 +87,13 @@ Node* Tree::push(ll data, Node* head)
 		return head;
 	head->height = NodeHeight(head);
 	if(BalanceFactor(head) == 2 && BalanceFactor(head->left) == 1)
-		head = LL(head);
+		return LL(head);
 	else if(BalanceFactor(head) == 2 && BalanceFactor(head->left) == -1)
-		head = LR(head);
+		return LR(head);
 	else if(BalanceFactor(head) == -2 && BalanceFactor(head->right) == -1)
-		head = RR(head);
+		return RR(head);
 	else if(BalanceFactor(head) == -2 && BalanceFactor(head->right) == 1)
-		head = RL(head);
+		return RL(head);
 	return head;
 }
 
@@ -106,54 +106,51 @@ void Tree::remove(ll data)
 
 Node* Tree::pop(ll data,Node* head)
 {
-	Node* temp = search(data,head);
-	if(temp == NULL)
+	if(head == NULL)
 	{
 		cout << data << " doesn't exist\n";
-		return head;
+		return NULL;
 	}
-	Node* temp1 = par(data,root,NULL);
-	if(temp->right == NULL && temp->left == NULL)
+	if(head->right == NULL && head->left == NULL)
 	{
-		if(temp1 == NULL)
+		if(head == root)
 			root = NULL;
-		else
-		{
-			if(temp1->right == temp)
-				temp1->right = NULL;
-			else
-				temp1->left = NULL;
-		}
+		delete(head);
+		return NULL;
 	}
-	else if(temp->right != NULL && temp->left == NULL)
-	{
-		if(temp1 == NULL)
-			root = root->right;
-		else
-		{
-			if(temp1->right == temp)
-				temp1->right = temp->right;
-			else
-				temp1->left = temp->right;
-		}
-	}
-	else if(temp->right == NULL && temp->left != NULL)
-	{
-		if(temp1 == NULL)
-			root = root->left;
-		else
-		{
-			if(temp1->right == temp)
-				temp1->right = temp->left;
-			else
-				temp1->left = temp->left;
-		}
-	}
+	if(data < head->data)
+		head->left = pop(data,head->left);
+	else if(data > head->data)
+		head->right = pop(data,head->right);
 	else
 	{
-		
-		head = pop(successor(data),head);
+		if(Height(head->left->data)>Height(head->right->data))
+		{
+			ll q = predecessor(head->left->data);
+			head->data = q;
+			head->left = pop(q,head->left);
+		}
+		else
+		{
+			ll q = successor(head->right->data);
+			head->data = q;
+			head->right = pop(q,head->right);
+		}
 	}
+	head->height = NodeHeight(head);
+	if(BalanceFactor(head) == 2 && BalanceFactor(head->left) == 1)
+		return LL(head);
+	else if(BalanceFactor(head) == 2 && BalanceFactor(head->left) == -1)
+		return LR(head);
+	else if(BalanceFactor(head) == -2 && BalanceFactor(head->right) == -1)
+		return RR(head);
+	else if(BalanceFactor(head) == -2 && BalanceFactor(head->right) == 1)
+		return RL(head);
+    else if (BalanceFactor(head) == 2 && BalanceFactor(head->left) == 0)  // L0 Rotation
+        return LL(head);
+    else if (BalanceFactor(head) == -2 && BalanceFactor(head->right) == 0)  // R0 Rotation
+        return RR(head);
+ 
 	return head;
 }
 
@@ -473,70 +470,66 @@ ll Tree::Height(ll data)
 
 Node* Tree::LL(Node* head)
 {
-	Node* temp = par(head->data,root,NULL);
-	if(temp == NULL)
-	{
-		root = head->left;
-		temp = root;
-	}
-	else
-		temp = head->left;
-	Node* ptr = temp->right;
-	temp->right = head;
-	temp->right->left = ptr;
-	return temp;
+	Node* LeftChild = head->left;
+	Node* LeftRightChild = LeftChild->right;
+	LeftChild->right = head;
+	head->left = LeftRightChild;
+
+	head->height = NodeHeight(head);
+	LeftChild->height = NodeHeight(LeftChild);
+
+
+
+	return LeftChild;
 }
 
 Node* Tree::RR(Node* head)
 {
-	Node* temp = par(head->data,root,NULL);
-	if(temp == NULL)
-	{
-		root = head->right;
-		temp = root;
-	}
-	else
-		temp = head->right;
-	Node* ptr = temp->left;
-	temp->left = head;
-	temp->left->right = ptr;
-	return temp;
+	Node* RightChild = head->right;
+	Node* RightLeftChild = RightChild->left;
+
+	RightChild->left = head;
+	head->right = RightLeftChild;
+
+	head->height = NodeHeight(head);
+	RightChild->height = NodeHeight(RightChild);
+	return RightChild;
 }
 
 Node* Tree::LR(Node* head)
 {
-	Node* temp = par(head->data,root,NULL);
-	if(temp == NULL)
-	{
-		root = head->left->right;
-		temp = root;
-	}
-	else
-		temp = head->left->right;
-	Node* ptr = head->left;
-	head->left->right = temp->left;
-	head->left = temp->right;
-	temp->right = head;
-	temp->left = ptr;
-	return temp;
+	Node* NewHead = head->left->right;
+	Node* LeftChild = head->left;
+
+	head->left = NewHead->right;
+	LeftChild->right = NewHead->left;
+
+	NewHead->left = LeftChild;
+	NewHead->right = head;
+
+	LeftChild->height = NodeHeight(LeftChild);
+	head->height = NodeHeight(head);
+	NewHead->height = NodeHeight(NewHead);
+
+	return NewHead;
 }
 
 Node* Tree::RL(Node* head)
 {
-	Node* temp = par(head->data,root,NULL);
-	if(temp == NULL)
-	{
-		root = head->right->left;
-		temp = root;
-	}
-	else
-		temp = head->right->left;
-	Node* ptr = head->right;
-	head->right->left = temp->right;
-	head->right = temp->left;
-	temp->left = head;
-	temp->right = ptr;
-	return temp;
+	Node* NewHead = head->right->left;
+	Node* RightChild = head->right;
+
+	head->right = NewHead->left;
+	RightChild->left = NewHead->right;
+
+	NewHead->left = head;
+	NewHead->right = RightChild;
+
+	head->height = NodeHeight(head);
+	RightChild->height = NodeHeight(RightChild);
+	NewHead->height = NodeHeight(NewHead);
+
+	return NewHead;
 }
 
 /*-----------------x-----------------Convert_To_AVL-----------------------x---------*/
